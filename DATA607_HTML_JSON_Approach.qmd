@@ -1,0 +1,39 @@
+---
+title: "Working with HTML and JSON: Approach"
+author: "Ummay Rukiya"
+date: "2026-10-15"
+format:
+  html:
+    toc: true
+    theme: flatly
+---
+
+## Overview
+
+For this assignment, I plan to use three books about space and astronomy to practice working with HTML and JSON. I chose this subject because I enjoy learning about space. I will record the same book information in both formats, load each file into R, and compare the resulting data frames.
+
+## Selected Books
+
+The three books I plan to use are *Cosmos* by Carl Sagan, *Pale Blue Dot* by Carl Sagan, and *Welcome to the Universe: An Astrophysical Tour* by Neil deGrasse Tyson, Michael A. Strauss, and J. Richard Gott. The third book has multiple authors, which meets the assignment requirement.
+
+For each book, I will record its title, authors, publication year, publisher, and ISBN. I will check the details against publisher or library records and make sure the year, publisher, and ISBN refer to the same edition.
+
+## Planned Approach
+
+First, I will manually create an HTML file named `books.html`. It will contain a table with one row for each book and columns for the five attributes I selected.
+
+Next, I will manually create a JSON file named `books.json` containing the same information. I will represent each book as an object and store its authors in an array so that the book with multiple authors is represented clearly.
+
+I will upload both files to a public GitHub repository. My R code will read them from their online locations using `rvest` for the HTML table and `jsonlite` for the JSON data.
+
+After importing the files, I will make their column names, data types, and row order consistent. I will also convert the JSON author arrays into the same author-text format used in the HTML table. Then I will use `identical()` to check whether the two data frames match. If they do not, I will use `all.equal()` to help identify the differences.
+
+## Anticipated Challenges
+
+One challenge will be representing multiple authors correctly in both formats. The HTML table will store the authors together in one cell, while JSON will store them in an array. I will need to account for that difference when comparing the imported data.
+
+I will also check quotation marks, commas, brackets, and HTML tags carefully because a small formatting mistake could prevent a file from loading correctly. I will keep ISBNs as text so they are treated as identifiers rather than numbers.
+
+## Expected Outcome
+
+I expect both files to contain the same book information, even though they organize it differently. I will report whether the imported data frames are identical before and after making their structures consistent, and explain any differences I find.
