@@ -1,0 +1,148 @@
+---
+title: "Working with HTML and JSON"
+author: "Ummay Rukiya"
+date: "2026-10-18"
+format:
+  html:
+    toc: true
+    code-fold: true
+    theme: flatly
+execute:
+  echo: true
+  warning: false
+---
+
+## Overview
+
+For this assignment, I used three books about space and astronomy to practice working with HTML and JSON. I chose this subject because I enjoy learning about space.
+
+The books are *Cosmos*, *Pale Blue Dot*, and *Welcome to the Universe: An Astrophysical Tour*. The third book has three authors, which allows me to explore how multiple authors can be represented differently in the two formats.
+
+For each book, I recorded the title, authors, publication year, publisher, and ISBN. I will manually create an HTML table and a JSON file containing the same information, read both files from GitHub into separate R data frames, and compare the results.
+
+## Book Information Sources
+
+I checked the book details using the publishers’ websites:
+
+- [Cosmos — Ballantine Books](https://www.penguinrandomhouse.com/books/159730/cosmos-by-carl-sagan/)
+- [Pale Blue Dot — Ballantine Books](https://www.penguinrandomhouse.com/books/159735/pale-blue-dot-by-carl-sagan/)
+- [Welcome to the Universe — Princeton University Press](https://press.princeton.edu/books/hardcover/9780691157245/welcome-to-the-universe)
+
+I used the publication year and ISBN for each selected edition rather than mixing details from different editions. The selected editions are the 2013 paperback of Cosmos, the 1997 paperback of Pale Blue Dot, and the 2016 hardcover of Welcome to the Universe.
+
+The publisher lists Carl Sagan and Ann Druyan as authors of the selected Pale Blue Dot edition, so I will include both names in my files.
+
+## Loading Required Packages
+
+I used `rvest` to read the HTML table and `jsonlite` to read the JSON file. I used `knitr` to display the results as tables.
+
+```{r}
+library(rvest)
+library(jsonlite)
+library(knitr)
+```
+
+## Loading the HTML Data
+
+The HTML file contains one table with three books and five columns. I read the table from its public GitHub URL and stored it as a data frame. I disabled automatic type conversion so the ISBN values would remain text.
+
+```{r}
+html_url <- paste0(
+  "https://raw.githubusercontent.com/UR-71/",
+  "DATA607-HTML-JSON/main/books.html"
+)
+
+books_html <- read_html(html_url) |>
+  html_element("table") |>
+  html_table(convert = FALSE) |>
+  as.data.frame()
+
+kable(
+  books_html,
+  caption = "Book Data Imported from HTML"
+)
+
+dim(books_html)
+```
+
+## Loading the JSON Data
+
+I read the JSON file from its public GitHub URL into a separate data frame. The authors are stored as arrays in JSON, so they are imported as a list column rather than the single text column used in the HTML table.
+
+```{r}
+json_url <- paste0(
+  "https://raw.githubusercontent.com/UR-71/",
+  "DATA607-HTML-JSON/main/books.json"
+)
+
+books_json <- fromJSON(json_url)
+
+dim(books_json)
+str(books_json)
+```
+
+## Comparing the Original Imports
+
+Both data frames contain the same book information, but they store some values differently. I compared them before making any changes to their structures.
+
+```{r}
+identical(books_html, books_json)
+
+all.equal(books_html, books_json)
+```
+
+## Making the Structures Consistent
+
+I converted the HTML publication years to integers and combined each JSON author array into one text value, separating authors with semicolons. I also matched the column order, sorted both data frames by title, and reset their row names before comparing them again.
+
+```{r}
+books_html_clean <- books_html
+books_json_clean <- books_json
+
+books_html_clean$publication_year <- as.integer(
+  books_html_clean$publication_year
+)
+
+books_json_clean$authors <- vapply(
+  books_json_clean$authors,
+  function(authors) paste(authors, collapse = "; "),
+  character(1)
+)
+
+books_json_clean <- books_json_clean[
+  , names(books_html_clean),
+  drop = FALSE
+]
+
+books_html_clean <- books_html_clean[
+  order(books_html_clean$title),
+  ,
+  drop = FALSE
+]
+
+books_json_clean <- books_json_clean[
+  order(books_json_clean$title),
+  ,
+  drop = FALSE
+]
+
+rownames(books_html_clean) <- NULL
+rownames(books_json_clean) <- NULL
+
+identical(books_html_clean, books_json_clean)
+
+all.equal(books_html_clean, books_json_clean)
+
+kable(
+  books_json_clean,
+  caption = "Book Data After Standardizing the Structures"
+)
+```
+
+## Conclusion
+
+The HTML and JSON files contained the same information about three astronomy books, but the data frames were not identical immediately after importing them. HTML stored the authors and publication years as text, while JSON stored the authors as arrays and the years as integers.
+
+After combining the JSON author arrays into text and making the data types and ordering consistent, both `identical()` and `all.equal()` returned `TRUE`. This confirmed that the two data frames matched.
+
+This exercise helped me understand that the same information can have different structures depending on its file format. Checking those structures is important before comparing or combining imported data.
