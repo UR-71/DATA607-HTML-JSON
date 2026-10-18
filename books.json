@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Cosmos",
+    "authors": ["Carl Sagan"],
+    "publication_year": 2013,
+    "publisher": "Ballantine Books",
+    "isbn": "9780345539434"
+  },
+  {
+    "title": "Pale Blue Dot",
+    "authors": ["Carl Sagan", "Ann Druyan"],
+    "publication_year": 1997,
+    "publisher": "Ballantine Books",
+    "isbn": "9780345376596"
+  },
+  {
+    "title": "Welcome to the Universe: An Astrophysical Tour",
+    "authors": [
+      "Neil deGrasse Tyson",
+      "Michael A. Strauss",
+      "J. Richard Gott"
+    ],
+    "publication_year": 2016,
+    "publisher": "Princeton University Press",
+    "isbn": "9780691157245"
+  }
+]
